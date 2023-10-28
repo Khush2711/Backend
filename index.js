@@ -1,9 +1,9 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const router = require('./Routes/routes');
-const pass = "kNUixgO5xr4pFB5L";
 const PORT = 2711;
-const URL = `mongodb+srv://Khush:${pass}@suvidha.obaoiv6.mongodb.net/`;
+const URL = process.env.DB_URL.toString();
 const connection = require('./Connection/connect');
 
 
