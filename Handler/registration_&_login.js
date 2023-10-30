@@ -13,7 +13,7 @@ const registration = async (req, res) => {
         const User = await model.find({ email: email });
 
         if (User.length) {
-            res.send(`User Already Exist.`);
+            return res.status(201).json({ user: false});
         }
         else if (validator.isStrongPassword(password)) {
 
@@ -23,7 +23,7 @@ const registration = async (req, res) => {
 
             const token = jwt.sign({ email: (await result).email, id: (await result)._id }, key);
 
-            return res.status(201).json({ user: result, token: token });
+            return res.status(201).json({ user: true, token: token });
 
         }
         else {
@@ -48,7 +48,7 @@ const login = async (req, res) => {
         const User = await model.find({ email: email });
 
         if (User.length == 0) {
-            return res.status(404).json({ message: "User Not Found" });
+            return res.status(404).json({ message: "User Not Found",user : false });
         }
 
         const decryptPassword = await bcrypt.compare(password, User[0].password);
@@ -59,7 +59,7 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ email: User.email, id: User._id }, key);
 
-        return res.status(201).json({ user: User, token: token });
+        return res.status(201).json({ user: true, token: token });
 
     }
     catch (err) {
