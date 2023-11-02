@@ -10,6 +10,12 @@ let data = {
 };
 
 
+
+
+
+
+
+
 const pdfViewer = (req, res) => {
     res.render(`${viewerPath}/pdfMaker.ejs`, { data });
 };

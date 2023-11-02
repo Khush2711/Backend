@@ -1,71 +1,147 @@
 const mongoose = require('mongoose');
-const models = require('../Model/registration_&_login');
+const User = require('../Model/user_model');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const key = "Suvidha";
-
-const registration = async (req, res) => {
+const sendEmail = require('./email');
+const Form = require("../Model/form_model")
+exports.registration = async (req, res) => {
     const { name, email, password } = req.body;
-
+    if(!email || !password || !name){
+        return res.status(400).json({
+            success: false,
+            message: "All fields are required"
+           });
+    }
     try {
-        const model = models.registration;
-        const User = await model.find({ email: email });
+        const user = await User.findOne({ email: email });
 
-        if (User.length) {
-            return res.status(201).json({ user: false});
+        if (user) {
+            return res.status(400).json({
+                 success: false,
+                 message:"User already Exist"
+                });
         }
         else if (validator.isStrongPassword(password)) {
-
+            const options= {
+                expires : new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+                httpOnly :true,
+            }
             encryptPassword = await bcrypt.hash(password, 10);
 
-            const result = model.create({ 'name': name, 'email': email, 'password': encryptPassword });
+            const result =await User.create({name,email,password:encryptPassword });
+result.password=undefined;
+            const token = jwt.sign({id:result._id }, process.env.SECRET ,{expiresIn:process.env.JWT_EXPIRE});
 
-            const token = jwt.sign({ email: (await result).email, id: (await result)._id }, key);
-
-            return res.status(201).json({ user: true, token: token });
+            return res.status(201).cookie('token',token,options).json({ success: true,token, result });
 
         }
         else {
-            res.send('Password Is Week');
+            return res.status(400).json({
+                success: false,
+                message:"Please create a strong"
+               });
         }
     }
     catch (err) {
-        console.log(`error occur at in registration module : ${err}`);
-        return res.status(500);
+        return res.status(400).json({
+                 success: false,
+                 message: err.message
+                });
     }
 
 };
 
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
 
     const { email, password } = req.body;
-
+if(!email || !password){
+    return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+       });
+}
     try {
 
-        const model = models.registration;
-        const User = await model.find({ email: email });
+        const user = await User.findOne({ email: email });
 
-        if (User.length == 0) {
-            return res.status(404).json({ message: "User Not Found",user : false });
+        if (!user) {
+            return res.status(404).json({ message: "User Not Found",success : false });
         }
 
-        const decryptPassword = await bcrypt.compare(password, User[0].password);
 
+
+        const decryptPassword = await bcrypt.compare(password, user.password);
         if (!decryptPassword) {
-            return res.status(400).json({ message: "Invalid Credentials" });
+            return res.status(400).json({ message: "Invalid Credentials" , success:false });
         }
-
-        const token = jwt.sign({ email: User.email, id: User._id }, key);
-
-        return res.status(201).json({ user: true, token: token });
+ const token = jwt.sign({id:user._id }, process.env.SECRET ,{expiresIn:process.env.JWT_EXPIRE});
+ user.password= undefined;
+ const options= {
+    expires : new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+    httpOnly :true
+}
+return res.status(201).cookie('token',token,options).json({ success: true,token, user });
 
     }
     catch (err) {
-        console.log(`error occur at in login module : ${err}`);
-        return res.status(500);
+       return res.status(400).json({
+                 success: false,
+                 message: err.message
+                });
     }
 };
 
-module.exports = { registration, login };
+exports.form= async(req,res)=>{
+const {email,name,role,work,duration,from,to}= req.body;
+
+if(!email ||!name ||!role ||!work ||!duration|| !from|| !to){
+    return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+       })}
+
+
+try {
+   const e = await sendEmail({email,name,role,work,duration,from,to}) 
+   console.log(e)   
+} catch (error) {
+    console.log(error , 2)
+    return res.status(400).json({
+        success: false,
+        message: "Internal Error"
+       });
+}
+// try {
+//     const pdf = await generatePDF({email,name,role,work,duration,from,to}) 
+//     console.log(pdf);
+//     console.log(y);
+// } catch (error) {
+//     console.log(error.message)
+// }
+//const y=await genPDF();
+//console.log(y , 1);
+
+const form =await Form.create({email,name,role,work,duration,from,to , sendBy_id:req.user.id})
+
+return res.status(200).json({
+    success: true,
+    message: "Mail send Successfully"
+   });
+}
+
+exports.logout= async(req,res)=>{
+    res.cookie("token" , null ,{
+        expires: new Date(Date.now()),
+        httpOnly: true
+    })
+    res.status(200).json({
+        success:true,
+        message:"logged out successfully"
+    })
+}
+
+
+
+
