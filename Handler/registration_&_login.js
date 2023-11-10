@@ -7,12 +7,21 @@ const sendEmail = require('./email');
 const Form = require("../Model/form_model")
 exports.registration = async (req, res) => {
     const { name, email, password } = req.body;
+    var mailformat = "^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$"
+    const check1=email.match(mailformat)
+    //console.log(req.cookies);
     if(!email || !password || !name){
         return res.status(400).json({
             success: false,
             message: "All fields are required"
            });
     }
+
+    if(!check1){
+        return res.status(400).json({
+            success: false,
+            message: "enter correct email"
+           })}
     try {
         const user = await User.findOne({ email: email });
 
@@ -22,7 +31,8 @@ exports.registration = async (req, res) => {
                  message:"User already Exist"
                 });
         }
-        else if (validator.isStrongPassword(password)) {
+        else{
+        //else if (validator.isStrongPassword(password)) {
             const options= {
                 expires : new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
                 httpOnly :true,
@@ -33,15 +43,19 @@ exports.registration = async (req, res) => {
 result.password=undefined;
             const token = jwt.sign({id:result._id }, process.env.SECRET ,{expiresIn:process.env.JWT_EXPIRE});
 
-            return res.status(201).cookie('token',token,options).json({ success: true,token, result });
+            return res.status(201).cookie("token",token,{
+                expires : new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+                httpOnly :true,
+                domain: "localhost"
+            }).json({ success: true,token, result });
 
         }
-        else {
-            return res.status(400).json({
-                success: false,
-                message:"Please create a strong"
-               });
-        }
+        // else {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message:"Please create a strong Password"
+        //        });
+        // }
     }
     catch (err) {
         return res.status(400).json({
@@ -56,6 +70,7 @@ result.password=undefined;
 exports.login = async (req, res) => {
 
     const { email, password } = req.body;
+    console.log(email,password)
 if(!email || !password){
     return res.status(400).json({
         success: false,
@@ -82,7 +97,10 @@ if(!email || !password){
     expires : new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
     httpOnly :true
 }
-return res.status(201).cookie('token',token,options).json({ success: true,token, user });
+return res.status(201).cookie('token',token,{
+    ...options,
+    domain: "localhost",
+}).json({ success: true,token, user });
 
     }
     catch (err) {
@@ -96,12 +114,21 @@ return res.status(201).cookie('token',token,options).json({ success: true,token,
 exports.form= async(req,res)=>{
 const {email,name,role,work,duration,from,to}= req.body;
 
+var mailformat = "^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$"
+const check1=email.match(mailformat)
+//const check=validator.isEmail(email);
 if(!email ||!name ||!role ||!work ||!duration|| !from|| !to){
     return res.status(400).json({
         success: false,
         message: "All fields are required"
        })}
 
+       if(!check1){
+        return res.status(400).json({
+            success: false,
+            message: "enter correct email"
+           })}
+    
 
 try {
    const e = await sendEmail({email,name,role,work,duration,from,to}) 
@@ -110,7 +137,7 @@ try {
     console.log(error , 2)
     return res.status(400).json({
         success: false,
-        message: "Internal Error"
+        message: error.message
        });
 }
 // try {
