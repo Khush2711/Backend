@@ -22,7 +22,9 @@ const currentDate = getCurrentDate();
 
 const pdfViewer = (req, res) => {
     let data = {...req.body , currentDate};
-    res.render(`${viewerPath}/pdfMaker.ejs`, { data });
+console.log(data)
+    console.log(data , 111111111111111111);
+    res.render(`${viewerPath}/pdfMaker.ejs`, { data:data });
 };
 
 
@@ -30,28 +32,7 @@ const ejs = require('ejs');
 const fs = require('fs');
 const offerLetterPath = path.join(__dirname,'..','offerLetter.pdf');
 
-async function generatePdf(url) {
-    // const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-    try {
-        const browser = await puppeteer.launch({ headless: 'new' });
-
-        const page = await browser.newPage();
-
-        await page.goto(url, { waitUntil: 'networkidle2' });
-
-        await page.screenshot({ path: 'screenshot.png', fullPage: true });
-
-        await page.pdf({ path: offerLetterPath, format: 'A4' });
-
-        await browser.close();
-
-        res.send(`PDF generated`);
-    } catch (error) {
-        res.send('PDF generation failed:', error);
-    } finally {
-        res.send('PDF generation completed');
-    }
-}
 
 
-module.exports = { pdfViewer, generatePdf };
+
+module.exports =  {pdfViewer};

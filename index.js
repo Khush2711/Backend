@@ -7,11 +7,10 @@ const connection = require('./Connection/connect');
 const user = require('./Routes/routes')
 connection()
 
-
+app.use(express.static('public'));
 app.use(express.json());
 app.set('view engine','ejs');
 app.use(cookieParser())
-app.use(express.static('public'));
 app.use(express.urlencoded({extended:true}));
 
 app.use('/api/v1' , user);
