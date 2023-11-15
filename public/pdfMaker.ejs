@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF VIEWER</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .main {
+            margin-top: 5px;
+            width: 800px;
+            height: 400px;
+        }
+
+        .title {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        #logo {
+            height: 150px;
+            width: 150px;
+        }
+
+        .date {
+            display: flex;
+        }
+
+        #c1 {
+            align-self: last baseline;
+        }
+
+        #subject {
+            position: absolute;
+            left: 45%;
+        }
+
+        .termsConditions {
+            margin-left: 10px;
+        }
+
+        .termsConditions li {
+            text-align: justify;
+        }
+
+        #sign {
+            height: 150px;
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <ul>
+
+        <!-- below things are not used -->
+        <!-- <li> <%=data.email %></li>
+    <li> <%=data.work %></li>
+    <li> <%=data.duration %></li> -->
+
+        <!-- ------------------------------ -->
+
+        <!-- <li><%=data.name %></li> -->
+        <!-- <li> <%=data.role %></li> -->
+        <!-- <li> <%=data.from %></li> -->
+        <!-- <li> <%=data.to %></li> -->
+    </ul>
+
+
+
+    <div class="container">
+
+        <div class="main">
+
+            <div class="title">
+
+                <div>
+                    <img id="logo" src="/img/suvidha.jpg" alt="">
+                </div>
+
+                <div>
+                    <p id="titleHeading"><br><br>
+                    <h3>Suvidha Mahila Mandal, Walni</h3>
+                    Registration No. MH/568/1995<br>
+                    F No.12669<br>
+                    Registerd Under the Society Act of 1860
+                    </p>
+                </div>
+
+                <div>
+                    <p>
+                        <br><br>
+                        H.No. 1951, W.N.4, Khaperkheda, Saoner,<br>
+                        Nagpur, Maharashtra, India<br>
+                        Contact: (+91)08010996763<br>
+                        info@suvidhafoundationedutech.Org<br>
+                        www.suvidhafoundationedutech.org
+                    </p>
+                </div>
+
+            </div>
+            <hr>
+            <br>
+            <!-- Change Date -->
+            <div class="Date">
+                <div id="c1">
+                    <p>Date : <%=data.date %>
+                    </p>
+                    <br>
+                </div>
+            </div>
+
+            <div class="sub">
+                <div id="subject">
+                    INTERNSHIP: OFFER LETTER
+                </div><br><br>
+            </div>
+
+            <div class="content">
+
+                <p>
+                    To,<br>
+
+                    <!-- Name -->
+                    <b>
+                        <%=data.name %>
+                    </b>
+
+                </p><br>
+
+
+                <!-- role -->
+                <p>With reference to your interview, we are pleased to inform you that you have been selected as
+                    <strong>
+                        <%=data.role %>
+                    </strong> in our NGO - “Suvidha Mahila Mandal”, with the following terms and
+                    conditions.
+                </p>
+
+                <br><br>
+
+                <div class="termsConditions">
+
+                    <ul>
+                        <li>You will provide the Web Development services and apart from Web development you have to
+                            participate in the
+                            fundraising task also at Suvidha Foundation and deliver the effect of the work.</li>
+
+                        <!-- Starting Date and Ending Date -->
+                        <li>The internship period will be from <strong>
+                                <%=data.to %>
+                            </strong> to <strong>
+                                <%=data.from %>
+                            </strong>.</li>
+
+                        <li>Your work base station is work from Home and six days a week.</li>
+
+                        <li>It is an unpaid internship. The certificate of completion will be given only if you invest 4
+                            hours daily on all working
+                            days. You must participate in the daily team meetings through Google Meet. Also, the letter
+                            holds no value without a
+                            completion certificate from us with a unique identification number, which can be verified
+                            online.</li>
+
+                        <li>During the internship period and thereafter, you will not give out to anyone in writing or
+                            by
+                            word of mouth or
+                            otherwise particulars or details of work process, technical know-how, research carried out,
+                            security arrangements
+                            and/or matters of confidential or secret nature which you may come across during your
+                            service in
+                            this organization.</li>
+
+                        <li>In case of any misconduct which causes financial loss to the NGO or hurts its reputation and
+                            goodwill of the
+                            organization, the management has the right to terminate any intern. In case of termination,
+                            the
+                            management will not
+                            be issuing certificates to the intern.</li>
+
+                        <li>It is necessary for an intern to return all the organization belongings (login credentials,
+                            media created, and system) at
+                            the time of leaving the organization. A clearance and experience certificate will be given
+                            after
+                            completing the
+                            formalities. If any employee leaves the job/Internship without completing the formality, the
+                            organization will take
+                            necessary action. All the software/courses/data developed by the interns or any employee for
+                            the
+                            Suvidha Mahila
+                            Mandal are intellectual property of the organization & are protected by Indian Copyright
+                            Act.
+                            All the data generated
+                            during the internship period, is the property right of organization and can be used for any
+                            purpose. In case of any
+                            piracy, strict legal action will be taken by the organization against erring persons. No
+                            information or source codes or
+                            course curriculum or business secrets or financial position or other details of organization
+                            shall be discussed among
+                            friends or relatives or our competitors. Such leakage of information is likely to cause
+                            financial loss to the organization.
+                            Hence, in such a case, the organization will be terminating the employee immediately and if
+                            required, further legal
+                            action will be taken against that intern.</li><br>
+                    </ul>
+                </div>
+            </div>
+            <img id="sign" src="/img/signature.png" alt="">
+        </div>
+    </div>
+
+</body>
+
+</html>
