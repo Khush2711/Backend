@@ -6,17 +6,36 @@ const ejs = require('ejs');
 const fs = require('fs');
 // const pdf = require('html-pdf');
 
-const generatePDF=async(url,data)=>{
+
+//data,templatePath,outputPath
+
+const generatePDF=async(data,url)=>{
     try {
-        const browser = await puppeteer.launch({ headless: 'new' });
-
+        const browser = await puppeteer.launch({ headless: 'new' });   
         const page = await browser.newPage();
-
-        await page.goto(url, { waitUntil: 'networkidle2' });
-
+        await page.setRequestInterception(true);
+        page.on('request', (interceptedRequest) => {
+            interceptedRequest.continue({
+                postData: JSON.stringify(data),
+                headers: {
+                    ...interceptedRequest.headers(),
+                    'Content-Type': 'application/json',
+                },
+            });
+        });
+       await page.goto(url, { waitUntil: 'networkidle0' });
+        console.log(123);
+      // const html= await ejs.renderFile(`${viewerPath}/pdfMaker.ejs`, { data });
+       //await page.setContent(html);
         await page.screenshot({ path: 'screenshot.png', fullPage: true });
-
-        await page.pdf({ path: 'offerLetter.pdf', format: 'A4' });
+console.log(456)
+        await page.pdf({ path: 'offerLetter.pdf', format: 'A4' , printBackground:true , margin:{
+            top:"10px",
+            bottom: "20px",
+            left:"10px",
+            right: "20px"
+        } 
+    });
 
         await browser.close();
 

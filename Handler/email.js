@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer')
 const path = require('path');
 const generatePDF = require('./generatepdf');
-const { urlToHttpOptions } = require('url');
 
 const filePath = path.join(__dirname, '..', 'offerLetter.pdf');
 
@@ -11,7 +10,7 @@ const sendEmail = async (url, data) => {
     const templatePath = path.join(__dirname, '..', 'public', 'pdfMaker.ejs');
     const outputPath = path.join(__dirname, '..', 'offerLetter.pdf');
 
-    const pdf = await generatePDF(data,templatePath,outputPath)
+    const pdf = await generatePDF(data,url)
     console.log(pdf);
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_PROVIDER,
@@ -58,11 +57,12 @@ const sendEmail = async (url, data) => {
 
     const y2 = await transporter.sendMail(mail)
     console.log("Message sent: %s", y2.messageId);
+    return y2;
   } catch (error) {
-    // return res.status(400).json({
-    //   success: false,
-    //   message: error.message
-    // });
+     return ({
+       success: false,
+       message: error.message
+     });
     console.log(error.message, 1)
   }
 

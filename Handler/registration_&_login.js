@@ -112,7 +112,7 @@ exports.form = async (req, res) => {
 
     try {
         const e = await sendEmail(url,{ email, name, role, work, duration, from, to , currentDate : CurrDate.currentDate})
-        console.log(e)
+        console.log(e,55555555555555)
     } catch (error) {
         console.log(error, 2)
         return res.status(400).json({
