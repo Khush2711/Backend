@@ -99,7 +99,9 @@ exports.form = async (req, res) => {
     const { email, name, role, work, duration, from, to } = req.body;
 
     const url = `${req.protocol}://${req.get('host')}/api/v1/pdfViewer`;
-
+    var mailformat = "^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$"
+    const check1=email.match(mailformat)
+    //console.log(req.cookies);
     console.log(url)
 
     if (!email || !name || !role || !work || !duration || !from || !to) {
@@ -110,17 +112,32 @@ exports.form = async (req, res) => {
     }
 
 
+    if(!check1){
+        return res.status(400).json({
+            success: false,
+            message: "enter correct email"
+           })}
+var e;
+
     try {
-        const e = await sendEmail(url,{ email, name, role, work, duration, from, to , currentDate : CurrDate.currentDate})
+        console.log( new Date().toJSON().slice(0,10).replace(/-/g,'/'))
+         e = await sendEmail(url,{ email, name, role, work, duration, from, to , date : new Date().toJSON().slice(0,10).replace(/-/g,'/')})
         console.log(e,55555555555555)
     } catch (error) {
         console.log(error, 2)
         return res.status(400).json({
             success: false,
-            message: "Internal Error"
+            message: error.message
         });
     }
+console.log(e);
 
+if(e==false){
+    return res.status(400).json({
+        success: false,
+        message: "Internal Error"
+    });
+}
     const form = await Form.create({ email, name, role, work, duration, from, to, sendBy_id: req.user.id })
 
     return res.status(200).json({

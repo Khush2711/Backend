@@ -4,7 +4,7 @@ const generatePDF = require('./generatepdf');
 
 const filePath = path.join(__dirname, '..', 'offerLetter.pdf');
 
-const sendEmail = async (url, data) => {
+const sendEmail = async(url, data) => {
   console.log(data);
   try {
     const templatePath = path.join(__dirname, '..', 'public', 'pdfMaker.ejs');
@@ -59,11 +59,8 @@ const sendEmail = async (url, data) => {
     console.log("Message sent: %s", y2.messageId);
     return y2;
   } catch (error) {
-     return ({
-       success: false,
-       message: error.message
-     });
     console.log(error.message, 1)
+    return false;
   }
 
 }

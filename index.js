@@ -1,4 +1,5 @@
 require('dotenv').config()
+var cors = require('cors')
 const express = require('express');
 const cookieParser = require("cookie-parser")
 const app = express();
@@ -12,7 +13,7 @@ app.use(express.json());
 app.set('view engine','ejs');
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}));
-
+app.use(cors())
 app.use('/api/v1' , user);
 
 
